@@ -4,7 +4,7 @@ title = 'CubeSandbox Storage Analysis'
 tags = ["CubeSandbox", "存储", "sandbox"]
 +++
 
-# CubeSandbox存储
+# 1. CubeSandbox存储
 
 [CubeSandbox](https://github.com/TencentCloud/CubeSandbox/) 在宿主机(host)上创建微虚机(MVM)，在微虚机里运行容器。在微虚机系统盘，容器镜像， 容器可写层的处理方面其实存在很多选项或者问题，例如：
 
@@ -20,7 +20,7 @@ tags = ["CubeSandbox", "存储", "sandbox"]
 
 笔者在一个0.1.1版本的测试环境，对这些问题进行了一些研究，并将结论整理到图中，分享出来希望对大家有所帮助。
 
-# 微虚机vm.info
+# 2. 微虚机vm.info
 
 vm.info包含了微虚机所有配置信息，包括内核启动参数，块设备配置，viriofs配置，网络配置等。
 
@@ -32,9 +32,9 @@ curl --unix-socket /run/vc/vm/4d656bd35c9848f7abce297cd7cab6d2/chapi http://loca
 
 vm.info部分内容：
 
-![vm.info](D:\ksyun\code\blog\honkiko.github.io\content\posts\2026-06-26-cubesandbox-storage-analysis\vm.info-from-image.png)
+![vm.info](vm.info-from-image.png)
 
-# 启动sandbox的两种方式
+# 3. 启动sandbox的两种方式
 
 CubeSandbox启动sandbox主要有两种方式：
 
@@ -44,11 +44,11 @@ CubeSandbox启动sandbox主要有两种方式：
 
 在这两种方式下，对系统盘，容器镜像，容器可写层的处理，存在一定差异。下面分两种场景分别说明。
 
-# 从镜像创建sandbox
+# 4. 从镜像创建sandbox
 
-## 创建sandbox的req.json
+## 4.1 创建sandbox的req.json
 
-```shell
+```json
 {
     "volumes" : [
         {
@@ -104,33 +104,33 @@ CubeSandbox启动sandbox主要有两种方式：
 
 cubecli multirun req.json 即可创建sandbox。
 
-## 存储架构总览图
+## 4.2 存储架构总览图
 
 下图描述了sandbox的微虚机系统盘，容器镜像，容器可写层，empty_dir存储卷的映射关系。后面章节进行详细解读。
 ![sandbox from image](mvm-storage-from-scratch.drawio.png)
 
-## 微虚机系统盘
+## 4.3 微虚机系统盘
 
-### 镜像文件
+### 4.3.1 镜像文件
 
 从vm.info的 .config.payload.cmdline字段的内容 `root=/dev/pmem0 rootflags=dax,errors=remount-ro ro rootfstype=ext4` 可以确定微虚机内系统盘是/dev/pmem0。
 
 从vm.info的 .config.pmem[0].file字段，可以确定这个虚拟pmem块设备，内容来自 `/usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img`， 这就是是微虚机的系统盘镜像。
 
-```
+```shell
 # file /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img
 /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img: Linux rev 1.0 ext4 filesystem data, UUID=80960e03-c2f6-4caf-9d17-a8fd92aaa0ba (extents) (64bit) (large files) (huge files)
 ```
 
 这是一个raw image文件， 可以手动以loop设备的形式挂载到本地，查看其内容：
 
-```
+```shell
 # mount -o loop,ro  /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img /mnt/guest-img
 ```
 
 上述命令实际先创建了一个虚拟块设备 /dev/*loop*x ， 关联这个raw image文件。 然后把这个块设备上的文件系统(ext4)挂载到指定路径。
 
-### pmem设备
+### 4.3.2 pmem设备
 
 这个raw image文件，会被虚拟为一个pmem块设备，呈现到微虚机里面。理论上，这里使用virio-blk也是可以的。 使用pmem + 文件系统挂载指定只读和DAX选项(-o dax)，带来两个好处：
 
@@ -140,13 +140,13 @@ cubecli multirun req.json 即可创建sandbox。
 
 注意微虚机系统盘是只读挂载的。
 
-## 容器镜像
+## 4.4 容器镜像
 
-### 宿主机上的容器镜像
+### 4.4.1 宿主机上的容器镜像
 
 从镜像直接启动sandbox时，容器镜像需要先下载到宿主机，并按containerd的overlayfs  snapshotter展开，如下：
 
-```
+```shell
 /data/cubelet/root/io.containerd.snapshotter.v1.overlayfs/refs/default
 │
 ├── /f68a8bcb9dbd06e0d2750eabf63c45f51734a72831ed650d2349775865d5fc20 
@@ -165,11 +165,11 @@ cubecli multirun req.json 即可创建sandbox。
 
 其中每个子目录对应一个镜像的layer。该宿主机下载的所有容器镜像的所有layer，都会出现在这里。 上面只展示了一个sandbox所使用的容器镜像的4个layer。
 
-### viriofs映射
+### 4.4.2 viriofs映射
 
 vm.info的 .config.fs部分
 
-![](D:\ksyun\code\blog\honkiko.github.io\content\posts\2026-06-26-cubesandbox-storage-analysis\vm.info-virtiofs.png)
+![](vm.info-virtiofs.png)
 
 可以看到，通过virtiofs把4个layer的目录都映射到了微虚机里面， 在微虚机里面挂载virtiofs时需要指定tag=cubeShared。
 
@@ -183,9 +183,9 @@ vm.info的 .config.fs部分
 
 因此在微虚机内，会产生容器镜像内容的page cache。 如果同一台宿主机上多个sandbox使用同一个容器镜像， 那么会在微虚机内产生重复的page cache。
 
-## 容器可写层
+## 4.5 容器可写层
 
-### 宿主机上的virtio-blk镜像文件
+### 4.5.1 宿主机上的virtio-blk镜像文件
 
 从vm.info的.config.disks[0] 和 .config.disks[1]定义了两个virio-blk块设备，这两个虚拟块设备的数据实际存储在disks[0].path和disks[1].path 所指向的宿主机上两个raw image文件。这两个raw image文件都在 `/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir`  目录下。 这个目录结构如下：
 
@@ -215,7 +215,7 @@ vm.info的 .config.fs部分
 
 为了加快sandbox创建速度， cubelet会预先准备很多这样的空镜像文件。这样sandbox需要挂载virtio-blk块设备时， 直接找一个预创建好的镜像文件即可， 避免了从新创建一个带ext2空文件系统的镜像文件，所需要的耗时。
 
-### 微虚机里的virtio-blk块设备
+### 4.5.2 微虚机里的virtio-blk块设备
 
 通过cube-runtime login 登录到微虚机内，执行df -h可以看到虚拟磁盘和文件系统挂载情况：
 
@@ -236,7 +236,7 @@ overlay2        1.1G   84K  1.1G   1% /run/cube-containers/b48b9c87427847feb4595
 
 其中/dev/vda和/dev/vdb是两个virtio-blk块设备，分别挂载到了 /run/blk-cube/vda 和 /run/blk-cube/vdb。
 
-### 微虚机里的overlayfs挂载
+### 4.5.3 微虚机里的overlayfs挂载
 
 这里vda是作为容器的可写层。通过mount命令可以看到为容器创建的overlayfs挂载：
 
@@ -260,13 +260,13 @@ overlayfs的upperdir  `/run/blk-cube/vda/disk/b48b9c87427847feb4595394a187d46b/u
 
 overlayfs挂载到了 `/run/cube-containers/b48b9c87427847feb4595394a187d46b/rootfs` 。 这个目录会作为容器的rootfs。
 
-## emptyDir
+## 4.6 emptyDir
 
 virio-blk块设备vdb，对应前面创建sandbox的req.json里面定义的empty_dir临时卷。在微虚机上挂载点为 `/run/blk-cube/vdb`， 创建容器时会通过bind mount挂载到容器rootfs下指定的路径。
 
-# 从快照创建sandbox
+# 5. 从快照创建sandbox
 
-## 快照内容和存储路径
+## 5.1 快照内容和存储路径
 
 快照包括三类数据：
 
@@ -316,7 +316,7 @@ virio-blk块设备vdb，对应前面创建sandbox的req.json里面定义的empty
                     └── state.json
 ```
 
-## 快照的镜像内容
+## 5.2 快照的镜像内容
 
 `cubebox_os_image/rfs-xxxx`  路径下的 .ext4文件比较大， 是容器镜像的内容打包为一个ext4文件系统的raw image。这个文件也可以通过`mount -o loop` 挂载到宿主机本地目录来查看其内容， 等价于容器镜像各layer叠加以后的文件系统视图。
 
@@ -324,19 +324,19 @@ virio-blk块设备vdb，对应前面创建sandbox的req.json里面定义的empty
 
 这里有一个问题，微虚机系统盘镜像，总是固定使用 cubetoolbox/cube-image/cube-guest-image-cpu.img， 并没有把这个镜像打包到快照里面。 笔者感觉这是有问题的，因为 cubetoolbox/cube-image/cube-guest-image-cpu.img 也可能会更新， 之前使用老系统镜像打的快照， 再次创建sandbox，微虚机系统盘的内容也随之更新了，并不是之前打快照时的内容。 后面笔者会尝试提个pr到社区来解决这个隐患。
 
-## 快照的元数据，cpu内存状态
+## 5.3 快照的元数据，cpu内存状态
 
 在 cubetoolbox/cube-snapshot/cubebox 目录下的子目录，以模板名命名， 保存了元数据metadata.json,  cpu状态 state.json, 内存快照 memory-ranges。
 
-## 存储架构总览图
+## 5.4 存储架构总览图
 
 ![sandbox from snapshot](mvm-storage-from-template.drawio.png)
 
-## 微虚机系统盘
+## 5.5 微虚机系统盘
 
-微虚机系统盘的逻辑跟“从镜像创建sandbox”方式完全一样。 系统盘的raw image， 通过虚拟设备pmem0，挂载到微虚机，并作为微虚机的根目录。
+微虚机系统盘的逻辑跟”从镜像创建sandbox”方式完全一样。 系统盘的raw image， 通过虚拟设备pmem0，挂载到微虚机，并作为微虚机的根目录。
 
-## 容器镜像和容器可写层
+## 5.6 容器镜像和容器可写层
 
 这里是跟“从镜像创建sandbox”方式的主要区别所在。
 
@@ -344,7 +344,7 @@ virio-blk块设备vdb，对应前面创建sandbox的req.json里面定义的empty
 
 容器可写层的逻辑，跟“从镜像创建sandbox”方式一致，仍然是宿主机上`/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir`目录下的一个ext2 raw image文件，虚拟为virtio-blk块设备(vda) 挂载到微虚机。
 
-## 微虚机内的overlayfs挂载
+## 5.7 微虚机内的overlayfs挂载
 
 ```shell
 bash-5.2# mount
@@ -360,7 +360,7 @@ overlay2 on /run/cube-containers/tpl-kvm-1_0/rootfs type overlay (rw,relatime,lo
 
 可以看到， 在微虚机内部，pmem1块设备上的ext4文件系统，挂载到了 `/run/cube-containers/sandbox/pmem-cube/pmem1`,  然后这个目录作为overlayfs的lowerdir， vda上的子目录 `/run/blk-cube/vda/disk/tpl-kvm-1_0/upper` 作为overlayfs的upperdir， 将overlay合并视图挂载到 `/run/cube-containers/tpl-kvm-1_0/rootfs`， 这个目录作为容器的rootfs。
 
-# 两种方式存储架构的比较
+# 6. 两种方式存储架构的比较
 
 主要区别在于容器镜像的处理：
 

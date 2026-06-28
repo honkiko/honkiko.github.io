@@ -4,7 +4,7 @@ title = 'CubeSandbox Storage Analysis'
 tags = ["CubeSandbox", "Storage", "sandbox"]
 +++
 
-# CubeSandbox Storage
+# 1. CubeSandbox Storage
 
 [CubeSandbox](https://github.com/TencentCloud/CubeSandbox/) creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:
 
@@ -20,7 +20,7 @@ tags = ["CubeSandbox", "Storage", "sandbox"]
 
 The author investigated these questions in a version 0.1.1 test environment and organized the findings into diagrams, shared here in hopes of being helpful.
 
-# MVM vm.info
+# 2. MVM vm.info
 
 vm.info contains all configuration information of the MVM, including kernel boot parameters, block device configuration, virtiofs configuration, network configuration, etc.
 
@@ -34,7 +34,7 @@ Partial vm.info content:
 
 ![vm.info](vm.info-from-image.png)
 
-# Two Ways to Start a Sandbox
+# 3. Two Ways to Start a Sandbox
 
 CubeSandbox mainly has two ways to start a sandbox:
 
@@ -44,11 +44,11 @@ CubeSandbox mainly has two ways to start a sandbox:
 
 Under these two approaches, the handling of the system disk, container image, and container writable layer differs. The following sections explain each scenario separately.
 
-# Creating a Sandbox from an Image
+# 4. Creating a Sandbox from an Image
 
-## The req.json for Creating a Sandbox
+## 4.1 The req.json for Creating a Sandbox
 
-```shell
+```json
 {
     "volumes" : [
         {
@@ -104,33 +104,33 @@ Run the command `cubecli cubebox create req.json` or
 
 `cubecli multirun req.json` to create the sandbox.
 
-## Storage Architecture Overview
+## 4.2 Storage Architecture Overview
 
 The diagram below describes the mapping relationship between the sandbox's MVM system disk, container image, container writable layer, and empty_dir storage volumes. Later sections provide detailed explanations.
 ![sandbox from image](mvm-storage-from-scratch.drawio.png)
 
-## MVM System Disk
+## 4.3 MVM System Disk
 
-### Image File
+### 4.3.1 Image File
 
 From the content of vm.info's `.config.payload.cmdline` field `root=/dev/pmem0 rootflags=dax,errors=remount-ro ro rootfstype=ext4`, we can determine that the system disk inside the MVM is /dev/pmem0.
 
 From vm.info's `.config.pmem[0].file` field, we can determine that this virtual pmem block device's content comes from `/usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img`, which is the MVM's system disk image.
 
-```
+```shell
 # file /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img
 /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img: Linux rev 1.0 ext4 filesystem data, UUID=80960e03-c2f6-4caf-9d17-a8fd92aaa0ba (extents) (64bit) (large files) (huge files)
 ```
 
 This is a raw image file. You can manually mount it locally as a loop device to view its contents:
 
-```
+```shell
 # mount -o loop,ro  /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img /mnt/guest-img
 ```
 
 The above command first creates a virtual block device /dev/*loop*x associated with this raw image file, then mounts the filesystem (ext4) on that block device to the specified path.
 
-### pmem Device
+### 4.3.2 pmem Device
 
 This raw image file is virtualized as a pmem block device and presented to the MVM. Theoretically, virtio-blk could also be used here. Using pmem + filesystem mount with read-only and DAX options (-o dax) brings two benefits:
 
@@ -140,9 +140,9 @@ This raw image file is virtualized as a pmem block device and presented to the M
 
 Note that the MVM system disk is mounted read-only.
 
-## Container Image
+## 4.4 Container Image
 
-### Container Image on the Host
+### 4.4.1 Container Image on the Host
 
 When starting a sandbox directly from an image, the container image must first be downloaded to the host and expanded using containerd's overlayfs snapshotter, as follows:
 
@@ -165,7 +165,7 @@ When starting a sandbox directly from an image, the container image must first b
 
 Each subdirectory corresponds to a layer of the image. All layers of all container images downloaded on this host will appear here. Only the 4 layers of the container image used by one sandbox are shown above.
 
-### virtiofs Mapping
+### 4.4.2 virtiofs Mapping
 
 The `.config.fs` section of vm.info
 
@@ -175,17 +175,17 @@ As you can see, all 4 layer directories are mapped into the MVM via virtiofs. Wh
 
 Note that the `backendfs_config.cache` value in this virtiofs configuration is 2. The meanings of different values:
 
-| cache value | Policy Name | Core Behavior | Consistency / Performance Tradeoff |
-| ----------- | ----------- | ------------- | ---------------------------------- |
-| 0           | none        | Disable Guest caching, every IO fetches from Host | Best consistency, worst performance |
-| 1           | auto        | Metadata cache expires after 1 second, data uses close-to-open consistency | Balanced, recommended default |
-| 2           | always      | All content cached permanently, never proactively invalidated | Best performance, worst consistency |
+| cache value | Policy Name | Core Behavior                                                              | Consistency / Performance Tradeoff  |
+| ----------- | ----------- | -------------------------------------------------------------------------- | ----------------------------------- |
+| 0           | none        | Disable Guest caching, every IO fetches from Host                          | Best consistency, worst performance |
+| 1           | auto        | Metadata cache expires after 1 second, data uses close-to-open consistency | Balanced, recommended default       |
+| 2           | always      | All content cached permanently, never proactively invalidated              | Best performance, worst consistency |
 
 Therefore, page cache of container image content will be generated inside the MVM. If multiple sandboxes on the same host use the same container image, duplicate page cache will be generated inside the MVMs.
 
-## Container Writable Layer
+## 4.5 Container Writable Layer
 
-### virtio-blk Image File on the Host
+### 4.5.1 virtio-blk Image File on the Host
 
 From vm.info's `.config.disks[0]` and `.config.disks[1]`, two virtio-blk block devices are defined. The data of these two virtual block devices is actually stored in two raw image files on the host, pointed to by `disks[0].path` and `disks[1].path`. Both raw image files are located under the `/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir` directory. The directory structure is as follows:
 
@@ -215,7 +215,7 @@ The capacity of these virtio-blk devices can be specified, with a default of 1G.
 
 To speed up sandbox creation, cubelet pre-creates many such empty image files. When a sandbox needs to mount a virtio-blk block device, it directly uses a pre-created image file, avoiding the time needed to create a new image file with an empty ext2 filesystem.
 
-### virtio-blk Block Devices Inside the MVM
+### 4.5.2 virtio-blk Block Devices Inside the MVM
 
 Log into the MVM via `cube-runtime login` and run `df -h` to see the virtual disk and filesystem mount status:
 
@@ -236,7 +236,7 @@ overlay2        1.1G   84K  1.1G   1% /run/cube-containers/b48b9c87427847feb4595
 
 Among them, /dev/vda and /dev/vdb are two virtio-blk block devices, mounted to /run/blk-cube/vda and /run/blk-cube/vdb respectively.
 
-### overlayfs Mount Inside the MVM
+### 4.5.3 overlayfs Mount Inside the MVM
 
 Here vda serves as the container's writable layer. You can see the overlayfs mount created for the container via the mount command:
 
@@ -260,20 +260,20 @@ The upperdir of overlayfs `/run/blk-cube/vda/disk/b48b9c87427847feb4595394a187d4
 
 The overlayfs is mounted to `/run/cube-containers/b48b9c87427847feb4595394a187d46b/rootfs`. This directory serves as the container's rootfs.
 
-## emptyDir
+## 4.6 emptyDir
 
 The virtio-blk block device vdb corresponds to the empty_dir ephemeral volume defined in the req.json for creating the sandbox earlier. Its mount point inside the MVM is `/run/blk-cube/vdb`, and when creating the container, it will be bind-mounted to the specified path under the container's rootfs.
 
-# Creating a Sandbox from a Snapshot
+# 5. Creating a Sandbox from a Snapshot
 
-## Snapshot Content and Storage Path
+## 5.1 Snapshot Content and Storage Path
 
 Snapshots include three types of data:
 
 1. Static images
-
+   
    - MVM system disk image
-
+   
    - Container image
 
 2. Snapshot metadata
@@ -316,7 +316,7 @@ This data is stored in the following paths:
                     └── state.json
 ```
 
-## Snapshot Image Content
+## 5.2 Snapshot Image Content
 
 The .ext4 files under the `cubebox_os_image/rfs-xxxx` path are relatively large. They contain the container image content packaged as an ext4 filesystem raw image. This file can also be mounted to a local directory on the host using `mount -o loop` to view its contents, which is equivalent to the filesystem view after stacking all layers of the container image.
 
@@ -324,19 +324,19 @@ The .vm files under `cubebox_os_image/rfs-xxxx` are kernel binaries. Normally, t
 
 One issue here is that the MVM system disk image always uses `cubetoolbox/cube-image/cube-guest-image-cpu.img` and does not include this image in the snapshot. The author believes this is problematic, because `cubetoolbox/cube-image/cube-guest-image-cpu.img` could also be updated. If a snapshot was previously taken with an older system image, creating a sandbox again would update the MVM system disk content, which would not be the same as when the snapshot was taken. The author plans to submit a PR to the community to address this potential issue.
 
-## Snapshot Metadata, CPU and Memory State
+## 5.3 Snapshot Metadata, CPU and Memory State
 
 The subdirectories under `cubetoolbox/cube-snapshot/cubebox` are named by template name and contain the metadata `metadata.json`, CPU state `state.json`, and memory snapshot `memory-ranges`.
 
-## Storage Architecture Overview
+## 5.4 Storage Architecture Overview
 
 ![sandbox from snapshot](mvm-storage-from-template.drawio.png)
 
-## MVM System Disk
+## 5.5 MVM System Disk
 
 The MVM system disk logic is exactly the same as the "creating sandbox from image" method. The system disk raw image is mounted to the MVM via virtual device pmem0 and serves as the MVM's root directory.
 
-## Container Image and Container Writable Layer
+## 5.6 Container Image and Container Writable Layer
 
 This is the main difference from the "creating sandbox from image" method.
 
@@ -344,7 +344,7 @@ The container image is packaged as an ext4 filesystem raw image file and mounted
 
 The container writable layer logic is consistent with the "creating sandbox from image" method, still using an ext2 raw image file under the host's `/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir` directory, virtualized as a virtio-blk block device (vda) and mounted to the MVM.
 
-## overlayfs Mount Inside the MVM
+## 5.7 overlayfs Mount Inside the MVM
 
 ```shell
 bash-5.2# mount
@@ -360,14 +360,14 @@ overlay2 on /run/cube-containers/tpl-kvm-1_0/rootfs type overlay (rw,relatime,lo
 
 As you can see, inside the MVM, the ext4 filesystem on the pmem1 block device is mounted to `/run/cube-containers/sandbox/pmem-cube/pmem1`, then this directory serves as the lowerdir of overlayfs, the subdirectory `/run/blk-cube/vda/disk/tpl-kvm-1_0/upper` on vda serves as the upperdir of overlayfs, and the merged overlay view is mounted to `/run/cube-containers/tpl-kvm-1_0/rootfs`, which serves as the container's rootfs.
 
-# Comparison of Storage Architectures Between the Two Methods
+# 6. Comparison of Storage Architectures Between the Two Methods
 
 The main difference lies in the handling of container images:
 
-|                  | Creating sandbox from image                    | Creating sandbox from snapshot                    |
-| ---------------- | ----------------------------------------------- | ------------------------------------------------- |
-| Container image on host | One subdirectory per layer, consistent with containerd's default mechanism | Merged view of all layers, packaged as an ext4 filesystem raw image file |
-| How container image is transferred from host to MVM | virtiofs (cache=always) | pmem block device (DAX) |
-| Page cache inside MVM | Produces duplicate page cache | No page cache overhead |
+|                                                     | Creating sandbox from image                                                | Creating sandbox from snapshot                                           |
+| --------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Container image on host                             | One subdirectory per layer, consistent with containerd's default mechanism | Merged view of all layers, packaged as an ext4 filesystem raw image file |
+| How container image is transferred from host to MVM | virtiofs (cache=always)                                                    | pmem block device (DAX)                                                  |
+| Page cache inside MVM                               | Produces duplicate page cache                                              | No page cache overhead                                                   |
 
 According to the E2B protocol, sandboxes must be created from templates. However, in scenarios using CubeSandbox, it is not ruled out that sandboxes may need to be created directly from images without going through template snapshots. In this scenario, using pmem for container images provides better I/O performance and memory efficiency, with the drawback being an additional step to package the container image as a raw image.
