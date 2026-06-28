@@ -1,4 +1,5 @@
-baseURL = "https://example.org/"
+baseURL = "https://honkiko.github.io/"
+publishDir = "docs"
 locale = "zh-CN"
 defaultContentLanguage = "zh_hans"
 title = "HongZhiguo's blog"
