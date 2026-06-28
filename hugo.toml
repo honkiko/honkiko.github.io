@@ -1,5 +1,6 @@
 baseURL = "https://honkiko.github.io/"
 publishDir = "docs"
+disableHugoGeneratorInject = true
 locale = "zh-CN"
 defaultContentLanguage = "zh_hans"
 title = "HongZhiguo's blog"
