@@ -17,9 +17,24 @@ locale = "en-US"
 weight = 2
 title = "HongZhiguo's blog"
 
+[markup.tableOfContents]
+  startLevel = 1
+  endLevel = 6
+  ordered = false
+
 [taxonomies]
   tag = "tags"
   category = "categories"
+
+[params]
+  [params.widgets]
+    left = [
+      { type = "tag-cloud", params = { limit = 20 } }
+    ]
+    homepage = []
+    page = [
+      { type = "toc" }
+    ]
 
 [permalinks]
   post = "/p/:slug/"

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="CubeSandbox Storage CubeSandbox creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:\nIs the MVM system disk writable?\nDo multiple MVMs&rsquo; system disks produce duplicate page cache?\nAre container images stored on the host or inside the MVM?\nHow is the container&rsquo;s writable layer implemented?\n">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="1. CubeSandbox Storage CubeSandbox creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:\nIs the MVM system disk writable?\nDo multiple MVMs&rsquo; system disks produce duplicate page cache?\nAre container images stored on the host or inside the MVM?\nHow is the container&rsquo;s writable layer implemented?\n">
 <title>CubeSandbox Storage Analysis</title>
 
 
-<link rel="canonical" href="http://localhost:1313/en/p/cubesandbox-storage-analysis/">
+<link rel="canonical" href="https://example.org/en/p/cubesandbox-storage-analysis/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
 
 
-<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="CubeSandbox Storage Analysis">
-<meta property='og:description' content="CubeSandbox Storage CubeSandbox creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:\nIs the MVM system disk writable?\nDo multiple MVMs&rsquo; system disks produce duplicate page cache?\nAre container images stored on the host or inside the MVM?\nHow is the container&rsquo;s writable layer implemented?\n">
-<meta property='og:url' content='http://localhost:1313/en/p/cubesandbox-storage-analysis/'>
+<link rel="stylesheet" href="/scss/style.min.0c163dfb4b2c9eecc8a8515ca2cc078253dc6f0ff0346014898b9915ef947626.css"><meta property='og:title' content="CubeSandbox Storage Analysis">
+<meta property='og:description' content="1. CubeSandbox Storage CubeSandbox creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:\nIs the MVM system disk writable?\nDo multiple MVMs&rsquo; system disks produce duplicate page cache?\nAre container images stored on the host or inside the MVM?\nHow is the container&rsquo;s writable layer implemented?\n">
+<meta property='og:url' content='https://example.org/en/p/cubesandbox-storage-analysis/'>
 <meta property='og:site_name' content='HongZhiguo&#39;s blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='CubeSandbox' /><meta property='article:tag' content='Storage' /><meta property='article:tag' content='sandbox' /><meta property='article:published_time' content='2026-06-26T16:25:24&#43;08:00'/><meta property='article:modified_time' content='2026-06-26T16:25:24&#43;08:00'/>
 <meta name="twitter:title" content="CubeSandbox Storage Analysis">
-<meta name="twitter:description" content="CubeSandbox Storage CubeSandbox creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:\nIs the MVM system disk writable?\nDo multiple MVMs&rsquo; system disks produce duplicate page cache?\nAre container images stored on the host or inside the MVM?\nHow is the container&rsquo;s writable layer implemented?\n">
+<meta name="twitter:description" content="1. CubeSandbox Storage CubeSandbox creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:\nIs the MVM system disk writable?\nDo multiple MVMs&rsquo; system disks produce duplicate page cache?\nAre container images stored on the host or inside the MVM?\nHow is the container&rsquo;s writable layer implemented?\n">
     </head>
     <body class="
     article-page
@@ -54,10 +54,10 @@
 
     <header>
         
-        
+
         <div class="site-meta">
             <h1 class="site-name"><a href="/en/">HongZhiguo&#39;s blog</a></h1>
-            <h2 class="site-description">sidebar subtitle</h2>
+            <h2 class="site-description">a veteran in cloud computing</h2>
         </div>
     </header><ol class="menu" id="main-menu">
         
@@ -99,7 +99,7 @@
         
         <li class="menu-bottom-section">
             <ol class="menu">
-                    <li id="i18n-switch">  
+                    <li id="i18n-switch">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
   <path d="M4 5h7" />
@@ -160,8 +160,48 @@
                 
             </ol>
         </li>
-    </ol>
-</aside>
+    </ol><div class="sidebar-widgets">
+            
+                
+<section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
+  <circle cx="9" cy="9" r="2" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">
+        
+            <a href="/en/tags/">
+                Tags
+            </a>
+        
+    </h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/en/tags/cubesandbox/">
+                CubeSandbox
+            </a>
+        
+            <a href="/en/tags/sandbox/">
+                Sandbox
+            </a>
+        
+            <a href="/en/tags/storage/">
+                Storage
+            </a>
+        
+    </div>
+</section>
+
+                
+            
+        </div></aside>
 
     <aside class="sidebar right-sidebar sticky">
         
@@ -186,38 +226,47 @@
             <nav class="toc-nav" id="TableOfContents">
                 
   <ul>
-    <li><a href="#the-reqjson-for-creating-a-sandbox">The req.json for Creating a Sandbox</a></li>
-    <li><a href="#storage-architecture-overview">Storage Architecture Overview</a></li>
-    <li><a href="#mvm-system-disk">MVM System Disk</a>
+    <li><a href="#1-cubesandbox-storage">1. CubeSandbox Storage</a></li>
+    <li><a href="#2-mvm-vminfo">2. MVM vm.info</a></li>
+    <li><a href="#3-two-ways-to-start-a-sandbox">3. Two Ways to Start a Sandbox</a></li>
+    <li><a href="#4-creating-a-sandbox-from-an-image">4. Creating a Sandbox from an Image</a>
       <ul>
-        <li><a href="#image-file">Image File</a></li>
-        <li><a href="#pmem-device">pmem Device</a></li>
+        <li><a href="#41-the-reqjson-for-creating-a-sandbox">4.1 The req.json for Creating a Sandbox</a></li>
+        <li><a href="#42-storage-architecture-overview">4.2 Storage Architecture Overview</a></li>
+        <li><a href="#43-mvm-system-disk">4.3 MVM System Disk</a>
+          <ul>
+            <li><a href="#431-image-file">4.3.1 Image File</a></li>
+            <li><a href="#432-pmem-device">4.3.2 pmem Device</a></li>
+          </ul>
+        </li>
+        <li><a href="#44-container-image">4.4 Container Image</a>
+          <ul>
+            <li><a href="#441-container-image-on-the-host">4.4.1 Container Image on the Host</a></li>
+            <li><a href="#442-virtiofs-mapping">4.4.2 virtiofs Mapping</a></li>
+          </ul>
+        </li>
+        <li><a href="#45-container-writable-layer">4.5 Container Writable Layer</a>
+          <ul>
+            <li><a href="#451-virtio-blk-image-file-on-the-host">4.5.1 virtio-blk Image File on the Host</a></li>
+            <li><a href="#452-virtio-blk-block-devices-inside-the-mvm">4.5.2 virtio-blk Block Devices Inside the MVM</a></li>
+            <li><a href="#453-overlayfs-mount-inside-the-mvm">4.5.3 overlayfs Mount Inside the MVM</a></li>
+          </ul>
+        </li>
+        <li><a href="#46-emptydir">4.6 emptyDir</a></li>
       </ul>
     </li>
-    <li><a href="#container-image">Container Image</a>
+    <li><a href="#5-creating-a-sandbox-from-a-snapshot">5. Creating a Sandbox from a Snapshot</a>
       <ul>
-        <li><a href="#container-image-on-the-host">Container Image on the Host</a></li>
-        <li><a href="#virtiofs-mapping">virtiofs Mapping</a></li>
+        <li><a href="#51-snapshot-content-and-storage-path">5.1 Snapshot Content and Storage Path</a></li>
+        <li><a href="#52-snapshot-image-content">5.2 Snapshot Image Content</a></li>
+        <li><a href="#53-snapshot-metadata-cpu-and-memory-state">5.3 Snapshot Metadata, CPU and Memory State</a></li>
+        <li><a href="#54-storage-architecture-overview">5.4 Storage Architecture Overview</a></li>
+        <li><a href="#55-mvm-system-disk">5.5 MVM System Disk</a></li>
+        <li><a href="#56-container-image-and-container-writable-layer">5.6 Container Image and Container Writable Layer</a></li>
+        <li><a href="#57-overlayfs-mount-inside-the-mvm">5.7 overlayfs Mount Inside the MVM</a></li>
       </ul>
     </li>
-    <li><a href="#container-writable-layer">Container Writable Layer</a>
-      <ul>
-        <li><a href="#virtio-blk-image-file-on-the-host">virtio-blk Image File on the Host</a></li>
-        <li><a href="#virtio-blk-block-devices-inside-the-mvm">virtio-blk Block Devices Inside the MVM</a></li>
-        <li><a href="#overlayfs-mount-inside-the-mvm">overlayfs Mount Inside the MVM</a></li>
-      </ul>
-    </li>
-    <li><a href="#emptydir">emptyDir</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#snapshot-content-and-storage-path">Snapshot Content and Storage Path</a></li>
-    <li><a href="#snapshot-image-content">Snapshot Image Content</a></li>
-    <li><a href="#snapshot-metadata-cpu-and-memory-state">Snapshot Metadata, CPU and Memory State</a></li>
-    <li><a href="#storage-architecture-overview-1">Storage Architecture Overview</a></li>
-    <li><a href="#mvm-system-disk-1">MVM System Disk</a></li>
-    <li><a href="#container-image-and-container-writable-layer">Container Image and Container Writable Layer</a></li>
-    <li><a href="#overlayfs-mount-inside-the-mvm-1">overlayfs Mount Inside the MVM</a></li>
+    <li><a href="#6-comparison-of-storage-architectures-between-the-two-methods">6. Comparison of Storage Architectures Between the Two Methods</a></li>
   </ul>
 
             </nav>
@@ -321,38 +370,47 @@
             <nav class="toc-nav">
                 
   <ul>
-    <li><a href="#the-reqjson-for-creating-a-sandbox">The req.json for Creating a Sandbox</a></li>
-    <li><a href="#storage-architecture-overview">Storage Architecture Overview</a></li>
-    <li><a href="#mvm-system-disk">MVM System Disk</a>
+    <li><a href="#1-cubesandbox-storage">1. CubeSandbox Storage</a></li>
+    <li><a href="#2-mvm-vminfo">2. MVM vm.info</a></li>
+    <li><a href="#3-two-ways-to-start-a-sandbox">3. Two Ways to Start a Sandbox</a></li>
+    <li><a href="#4-creating-a-sandbox-from-an-image">4. Creating a Sandbox from an Image</a>
       <ul>
-        <li><a href="#image-file">Image File</a></li>
-        <li><a href="#pmem-device">pmem Device</a></li>
+        <li><a href="#41-the-reqjson-for-creating-a-sandbox">4.1 The req.json for Creating a Sandbox</a></li>
+        <li><a href="#42-storage-architecture-overview">4.2 Storage Architecture Overview</a></li>
+        <li><a href="#43-mvm-system-disk">4.3 MVM System Disk</a>
+          <ul>
+            <li><a href="#431-image-file">4.3.1 Image File</a></li>
+            <li><a href="#432-pmem-device">4.3.2 pmem Device</a></li>
+          </ul>
+        </li>
+        <li><a href="#44-container-image">4.4 Container Image</a>
+          <ul>
+            <li><a href="#441-container-image-on-the-host">4.4.1 Container Image on the Host</a></li>
+            <li><a href="#442-virtiofs-mapping">4.4.2 virtiofs Mapping</a></li>
+          </ul>
+        </li>
+        <li><a href="#45-container-writable-layer">4.5 Container Writable Layer</a>
+          <ul>
+            <li><a href="#451-virtio-blk-image-file-on-the-host">4.5.1 virtio-blk Image File on the Host</a></li>
+            <li><a href="#452-virtio-blk-block-devices-inside-the-mvm">4.5.2 virtio-blk Block Devices Inside the MVM</a></li>
+            <li><a href="#453-overlayfs-mount-inside-the-mvm">4.5.3 overlayfs Mount Inside the MVM</a></li>
+          </ul>
+        </li>
+        <li><a href="#46-emptydir">4.6 emptyDir</a></li>
       </ul>
     </li>
-    <li><a href="#container-image">Container Image</a>
+    <li><a href="#5-creating-a-sandbox-from-a-snapshot">5. Creating a Sandbox from a Snapshot</a>
       <ul>
-        <li><a href="#container-image-on-the-host">Container Image on the Host</a></li>
-        <li><a href="#virtiofs-mapping">virtiofs Mapping</a></li>
+        <li><a href="#51-snapshot-content-and-storage-path">5.1 Snapshot Content and Storage Path</a></li>
+        <li><a href="#52-snapshot-image-content">5.2 Snapshot Image Content</a></li>
+        <li><a href="#53-snapshot-metadata-cpu-and-memory-state">5.3 Snapshot Metadata, CPU and Memory State</a></li>
+        <li><a href="#54-storage-architecture-overview">5.4 Storage Architecture Overview</a></li>
+        <li><a href="#55-mvm-system-disk">5.5 MVM System Disk</a></li>
+        <li><a href="#56-container-image-and-container-writable-layer">5.6 Container Image and Container Writable Layer</a></li>
+        <li><a href="#57-overlayfs-mount-inside-the-mvm">5.7 overlayfs Mount Inside the MVM</a></li>
       </ul>
     </li>
-    <li><a href="#container-writable-layer">Container Writable Layer</a>
-      <ul>
-        <li><a href="#virtio-blk-image-file-on-the-host">virtio-blk Image File on the Host</a></li>
-        <li><a href="#virtio-blk-block-devices-inside-the-mvm">virtio-blk Block Devices Inside the MVM</a></li>
-        <li><a href="#overlayfs-mount-inside-the-mvm">overlayfs Mount Inside the MVM</a></li>
-      </ul>
-    </li>
-    <li><a href="#emptydir">emptyDir</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#snapshot-content-and-storage-path">Snapshot Content and Storage Path</a></li>
-    <li><a href="#snapshot-image-content">Snapshot Image Content</a></li>
-    <li><a href="#snapshot-metadata-cpu-and-memory-state">Snapshot Metadata, CPU and Memory State</a></li>
-    <li><a href="#storage-architecture-overview-1">Storage Architecture Overview</a></li>
-    <li><a href="#mvm-system-disk-1">MVM System Disk</a></li>
-    <li><a href="#container-image-and-container-writable-layer">Container Image and Container Writable Layer</a></li>
-    <li><a href="#overlayfs-mount-inside-the-mvm-1">overlayfs Mount Inside the MVM</a></li>
+    <li><a href="#6-comparison-of-storage-architectures-between-the-two-methods">6. Comparison of Storage Architectures Between the Two Methods</a></li>
   </ul>
 
             </nav>
@@ -363,7 +421,7 @@
     <section class="article-content">
     
     
-    <h1 id="cubesandbox-storage">CubeSandbox Storage
+    <h1 id="1-cubesandbox-storage">1. CubeSandbox Storage
 </h1><p><a class="link" href="https://github.com/TencentCloud/CubeSandbox/"  target="_blank" rel="noopener"
     >CubeSandbox</a> creates Micro Virtual Machines (MVMs) on the host, and runs containers inside the MVMs. There are many options and issues regarding the handling of the MVM system disk, container images, and container writable layers, such as:</p>
 <ul>
@@ -384,13 +442,13 @@
 </li>
 </ul>
 <p>The author investigated these questions in a version 0.1.1 test environment and organized the findings into diagrams, shared here in hopes of being helpful.</p>
-<h1 id="mvm-vminfo">MVM vm.info
+<h1 id="2-mvm-vminfo">2. MVM vm.info
 </h1><p>vm.info contains all configuration information of the MVM, including kernel boot parameters, block device configuration, virtiofs configuration, network configuration, etc.</p>
 <p>Taking sandbox id 4d656bd35c9848f7abce297cd7cab6d2 as an example, you can retrieve the MVM&rsquo;s vm.info with the following command:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl --unix-socket /run/vc/vm/4d656bd35c9848f7abce297cd7cab6d2/chapi http://localhost/api/v1/vm.info | jq
 </span></span></code></pre></div><p>Partial vm.info content:</p>
 <p><img alt="vm.info" class="gallery-image" data-flex-basis="660px" data-flex-grow="275" height="386" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/p/cubesandbox-storage-analysis/vm.info-from-image.png" srcset="/p/cubesandbox-storage-analysis/vm.info-from-image_hu_7671acceb0f2685c.png 800w, /p/cubesandbox-storage-analysis/vm.info-from-image.png 1062w" width="1062"></p>
-<h1 id="two-ways-to-start-a-sandbox">Two Ways to Start a Sandbox
+<h1 id="3-two-ways-to-start-a-sandbox">3. Two Ways to Start a Sandbox
 </h1><p>CubeSandbox mainly has two ways to start a sandbox:</p>
 <ul>
 <li>
@@ -401,71 +459,71 @@
 </li>
 </ul>
 <p>Under these two approaches, the handling of the system disk, container image, and container writable layer differs. The following sections explain each scenario separately.</p>
-<h1 id="creating-a-sandbox-from-an-image">Creating a Sandbox from an Image
-</h1><h2 id="the-reqjson-for-creating-a-sandbox">The req.json for Creating a Sandbox
-</h2><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;volumes&#34;</span> : <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;rootfs-wlayer&#34;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;volume_source&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;empty_dir&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;SizeLimit&#34;</span> : <span style="color:#e6db74">&#34;1Gi&#34;</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;tmp&#34;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;volume_source&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;empty_dir&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;SizeLimit&#34;</span> : <span style="color:#e6db74">&#34;2Gi&#34;</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;containers&#34;</span> : <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;nginx&#34;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;image&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;image&#34;</span> : <span style="color:#e6db74">&#34;nginx:latest&#34;</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;command&#34;</span> : <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;sleep&#34;</span> <span style="color:#f92672">]</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;args&#34;</span> : <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;1000000&#34;</span> <span style="color:#f92672">]</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;volume_mounts&#34;</span> : <span style="color:#f92672">[</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;rootfs-wlayer&#34;</span>,
-</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;container_path&#34;</span> : <span style="color:#e6db74">&#34;/&#34;</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>,
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;tmp&#34;</span>,
-</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;container_path&#34;</span> : <span style="color:#e6db74">&#34;/mnt1&#34;</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;resources&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;cpu&#34;</span> : <span style="color:#e6db74">&#34;500m&#34;</span>,
-</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;mem&#34;</span> : <span style="color:#e6db74">&#34;512Mi&#34;</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;security_context&#34;</span> : <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;readonly_rootfs&#34;</span> : false
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+<h1 id="4-creating-a-sandbox-from-an-image">4. Creating a Sandbox from an Image
+</h1><h2 id="41-the-reqjson-for-creating-a-sandbox">4.1 The req.json for Creating a Sandbox
+</h2><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;volumes&#34;</span> : [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;rootfs-wlayer&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;volume_source&#34;</span> : {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;empty_dir&#34;</span> : {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;SizeLimit&#34;</span> : <span style="color:#e6db74">&#34;1Gi&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;tmp&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;volume_source&#34;</span> : {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;empty_dir&#34;</span> : {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;SizeLimit&#34;</span> : <span style="color:#e6db74">&#34;2Gi&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;containers&#34;</span> : [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;nginx&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;image&#34;</span> : {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;image&#34;</span> : <span style="color:#e6db74">&#34;nginx:latest&#34;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;command&#34;</span> : [ <span style="color:#e6db74">&#34;sleep&#34;</span> ],
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;args&#34;</span> : [ <span style="color:#e6db74">&#34;1000000&#34;</span> ],
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;volume_mounts&#34;</span> : [
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;rootfs-wlayer&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;container_path&#34;</span> : <span style="color:#e6db74">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;tmp&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;container_path&#34;</span> : <span style="color:#e6db74">&#34;/mnt1&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            ],
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;resources&#34;</span> : {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;cpu&#34;</span> : <span style="color:#e6db74">&#34;500m&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;mem&#34;</span> : <span style="color:#e6db74">&#34;512Mi&#34;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;security_context&#34;</span> : {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;readonly_rootfs&#34;</span> : <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>This specifies two empty_dir volumes. One serves as the container&rsquo;s writable layer, and the other is similar to an emptyDir local ephemeral storage volume in k8s. Later sections will detail their implementation principles.</p>
 <p>Run the command <code>cubecli cubebox create req.json</code> or</p>
 <p><code>cubecli multirun req.json</code> to create the sandbox.</p>
-<h2 id="storage-architecture-overview">Storage Architecture Overview
+<h2 id="42-storage-architecture-overview">4.2 Storage Architecture Overview
 </h2><p>The diagram below describes the mapping relationship between the sandbox&rsquo;s MVM system disk, container image, container writable layer, and empty_dir storage volumes. Later sections provide detailed explanations.
 <img alt="sandbox from image" class="gallery-image" data-flex-basis="362px" data-flex-grow="150" height="787" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/p/cubesandbox-storage-analysis/mvm-storage-from-scratch.drawio.png" srcset="/p/cubesandbox-storage-analysis/mvm-storage-from-scratch.drawio_hu_83b463f2534615a2.png 800w, /p/cubesandbox-storage-analysis/mvm-storage-from-scratch.drawio.png 1188w" width="1188"></p>
-<h2 id="mvm-system-disk">MVM System Disk
-</h2><h3 id="image-file">Image File
+<h2 id="43-mvm-system-disk">4.3 MVM System Disk
+</h2><h3 id="431-image-file">4.3.1 Image File
 </h3><p>From the content of vm.info&rsquo;s <code>.config.payload.cmdline</code> field <code>root=/dev/pmem0 rootflags=dax,errors=remount-ro ro rootfstype=ext4</code>, we can determine that the system disk inside the MVM is /dev/pmem0.</p>
 <p>From vm.info&rsquo;s <code>.config.pmem[0].file</code> field, we can determine that this virtual pmem block device&rsquo;s content comes from <code>/usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img</code>, which is the MVM&rsquo;s system disk image.</p>
-<pre tabindex="0"><code># file /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img
-/usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img: Linux rev 1.0 ext4 filesystem data, UUID=80960e03-c2f6-4caf-9d17-a8fd92aaa0ba (extents) (64bit) (large files) (huge files)
-</code></pre><p>This is a raw image file. You can manually mount it locally as a loop device to view its contents:</p>
-<pre tabindex="0"><code># mount -o loop,ro  /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img /mnt/guest-img
-</code></pre><p>The above command first creates a virtual block device /dev/<em>loop</em>x associated with this raw image file, then mounts the filesystem (ext4) on that block device to the specified path.</p>
-<h3 id="pmem-device">pmem Device
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># file /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img</span>
+</span></span><span style="display:flex;"><span>/usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img: Linux rev 1.0 ext4 filesystem data, UUID<span style="color:#f92672">=</span>80960e03-c2f6-4caf-9d17-a8fd92aaa0ba <span style="color:#f92672">(</span>extents<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>64bit<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>large files<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>huge files<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>This is a raw image file. You can manually mount it locally as a loop device to view its contents:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># mount -o loop,ro  /usr/local/services/cubetoolbox/cube-image/cube-guest-image-cpu.img /mnt/guest-img</span>
+</span></span></code></pre></div><p>The above command first creates a virtual block device /dev/<em>loop</em>x associated with this raw image file, then mounts the filesystem (ext4) on that block device to the specified path.</p>
+<h3 id="432-pmem-device">4.3.2 pmem Device
 </h3><p>This raw image file is virtualized as a pmem block device and presented to the MVM. Theoretically, virtio-blk could also be used here. Using pmem + filesystem mount with read-only and DAX options (-o dax) brings two benefits:</p>
 <ol>
 <li>
@@ -476,8 +534,8 @@
 </li>
 </ol>
 <p>Note that the MVM system disk is mounted read-only.</p>
-<h2 id="container-image">Container Image
-</h2><h3 id="container-image-on-the-host">Container Image on the Host
+<h2 id="44-container-image">4.4 Container Image
+</h2><h3 id="441-container-image-on-the-host">4.4.1 Container Image on the Host
 </h3><p>When starting a sandbox directly from an image, the container image must first be downloaded to the host and expanded using containerd&rsquo;s overlayfs snapshotter, as follows:</p>
 <pre tabindex="0"><code>/data/cubelet/root/io.containerd.snapshotter.v1.overlayfs/refs/default
 │
@@ -494,7 +552,7 @@
     ├── fs
     └── work
 </code></pre><p>Each subdirectory corresponds to a layer of the image. All layers of all container images downloaded on this host will appear here. Only the 4 layers of the container image used by one sandbox are shown above.</p>
-<h3 id="virtiofs-mapping">virtiofs Mapping
+<h3 id="442-virtiofs-mapping">4.4.2 virtiofs Mapping
 </h3><p>The <code>.config.fs</code> section of vm.info</p>
 <p><img class="gallery-image" data-flex-basis="507px" data-flex-grow="211" height="618" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/p/cubesandbox-storage-analysis/vm.info-virtiofs.png" srcset="/p/cubesandbox-storage-analysis/vm.info-virtiofs_hu_2bb87ae26d02b963.png 800w, /p/cubesandbox-storage-analysis/vm.info-virtiofs.png 1306w" width="1306"></p>
 <p>As you can see, all 4 layer directories are mapped into the MVM via virtiofs. When mounting virtiofs inside the MVM, you need to specify tag=cubeShared.</p>
@@ -530,8 +588,8 @@
 	</tbody>
 </table></div>
 <p>Therefore, page cache of container image content will be generated inside the MVM. If multiple sandboxes on the same host use the same container image, duplicate page cache will be generated inside the MVMs.</p>
-<h2 id="container-writable-layer">Container Writable Layer
-</h2><h3 id="virtio-blk-image-file-on-the-host">virtio-blk Image File on the Host
+<h2 id="45-container-writable-layer">4.5 Container Writable Layer
+</h2><h3 id="451-virtio-blk-image-file-on-the-host">4.5.1 virtio-blk Image File on the Host
 </h3><p>From vm.info&rsquo;s <code>.config.disks[0]</code> and <code>.config.disks[1]</code>, two virtio-blk block devices are defined. The data of these two virtual block devices is actually stored in two raw image files on the host, pointed to by <code>disks[0].path</code> and <code>disks[1].path</code>. Both raw image files are located under the <code>/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir</code> directory. The directory structure is as follows:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir
 </span></span><span style="display:flex;"><span>├── 1Gi
@@ -553,7 +611,7 @@
 </span></span></code></pre></div><p>Files like <code>1Gi/0/16ab3912-6b41-474d-b971-012d95bfd917</code> are raw image files for the MVM&rsquo;s virtio-blk block devices. Their content is initially an empty ext2 filesystem. You can also mount them to a local directory on the host using <code>mount -o loop</code> to view their contents.</p>
 <p>The capacity of these virtio-blk devices can be specified, with a default of 1G. Those with 1G capacity are placed under the <code>1Gi</code> subdirectory, and others under the <code>othersv2</code> subdirectory.</p>
 <p>To speed up sandbox creation, cubelet pre-creates many such empty image files. When a sandbox needs to mount a virtio-blk block device, it directly uses a pre-created image file, avoiding the time needed to create a new image file with an empty ext2 filesystem.</p>
-<h3 id="virtio-blk-block-devices-inside-the-mvm">virtio-blk Block Devices Inside the MVM
+<h3 id="452-virtio-blk-block-devices-inside-the-mvm">4.5.2 virtio-blk Block Devices Inside the MVM
 </h3><p>Log into the MVM via <code>cube-runtime login</code> and run <code>df -h</code> to see the virtual disk and filesystem mount status:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bash-5.2# df -h
 </span></span><span style="display:flex;"><span>Filesystem      Size  Used Avail Use% Mounted on
@@ -568,7 +626,7 @@
 </span></span><span style="display:flex;"><span>/dev/vdb        1.1G   32K  1.1G   1% /run/blk-cube/vdb
 </span></span><span style="display:flex;"><span>overlay2        1.1G   84K  1.1G   1% /run/cube-containers/b48b9c87427847feb4595394a187d46b/rootfs
 </span></span></code></pre></div><p>Among them, /dev/vda and /dev/vdb are two virtio-blk block devices, mounted to /run/blk-cube/vda and /run/blk-cube/vdb respectively.</p>
-<h3 id="overlayfs-mount-inside-the-mvm">overlayfs Mount Inside the MVM
+<h3 id="453-overlayfs-mount-inside-the-mvm">4.5.3 overlayfs Mount Inside the MVM
 </h3><p>Here vda serves as the container&rsquo;s writable layer. You can see the overlayfs mount created for the container via the mount command:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bash-5.2# mount
 </span></span><span style="display:flex;"><span>/dev/pmem0 on / type ext4 <span style="color:#f92672">(</span>ro,relatime,errors<span style="color:#f92672">=</span>remount-ro,dax<span style="color:#f92672">=</span>always<span style="color:#f92672">)</span>
@@ -583,10 +641,10 @@
 <p>The lowerdir of overlayfs consists of the 4 container image layer directories mounted into the MVM via virtiofs (under the /run/cube-containers/shared/containers directory).</p>
 <p>The upperdir of overlayfs <code>/run/blk-cube/vda/disk/b48b9c87427847feb4595394a187d46b/upper</code> is a subdirectory under the vda mount point <code>/run/blk-cube/vda/</code>.</p>
 <p>The overlayfs is mounted to <code>/run/cube-containers/b48b9c87427847feb4595394a187d46b/rootfs</code>. This directory serves as the container&rsquo;s rootfs.</p>
-<h2 id="emptydir">emptyDir
+<h2 id="46-emptydir">4.6 emptyDir
 </h2><p>The virtio-blk block device vdb corresponds to the empty_dir ephemeral volume defined in the req.json for creating the sandbox earlier. Its mount point inside the MVM is <code>/run/blk-cube/vdb</code>, and when creating the container, it will be bind-mounted to the specified path under the container&rsquo;s rootfs.</p>
-<h1 id="creating-a-sandbox-from-a-snapshot">Creating a Sandbox from a Snapshot
-</h1><h2 id="snapshot-content-and-storage-path">Snapshot Content and Storage Path
+<h1 id="5-creating-a-sandbox-from-a-snapshot">5. Creating a Sandbox from a Snapshot
+</h1><h2 id="51-snapshot-content-and-storage-path">5.1 Snapshot Content and Storage Path
 </h2><p>Snapshots include three types of data:</p>
 <ol>
 <li>
@@ -639,21 +697,21 @@
 </span></span><span style="display:flex;"><span>                    ├── config.json
 </span></span><span style="display:flex;"><span>                    ├── memory-ranges
 </span></span><span style="display:flex;"><span>                    └── state.json
-</span></span></code></pre></div><h2 id="snapshot-image-content">Snapshot Image Content
+</span></span></code></pre></div><h2 id="52-snapshot-image-content">5.2 Snapshot Image Content
 </h2><p>The .ext4 files under the <code>cubebox_os_image/rfs-xxxx</code> path are relatively large. They contain the container image content packaged as an ext4 filesystem raw image. This file can also be mounted to a local directory on the host using <code>mount -o loop</code> to view its contents, which is equivalent to the filesystem view after stacking all layers of the container image.</p>
 <p>The .vm files under <code>cubebox_os_image/rfs-xxxx</code> are kernel binaries. Normally, this .vm file is identical to <code>cubetoolbox/cube-kernel-scf/vmlinux</code>. However, considering that after taking a snapshot, <code>cubetoolbox/cube-kernel-scf/vmlinux</code> might be updated, if the sandbox is started from the snapshot using the updated <code>cubetoolbox/cube-kernel-scf/vmlinux</code>, the kernel symbol table would not match. Therefore, when taking a snapshot, a copy of the MVM&rsquo;s kernel binary must also be saved in the snapshot.</p>
 <p>One issue here is that the MVM system disk image always uses <code>cubetoolbox/cube-image/cube-guest-image-cpu.img</code> and does not include this image in the snapshot. The author believes this is problematic, because <code>cubetoolbox/cube-image/cube-guest-image-cpu.img</code> could also be updated. If a snapshot was previously taken with an older system image, creating a sandbox again would update the MVM system disk content, which would not be the same as when the snapshot was taken. The author plans to submit a PR to the community to address this potential issue.</p>
-<h2 id="snapshot-metadata-cpu-and-memory-state">Snapshot Metadata, CPU and Memory State
+<h2 id="53-snapshot-metadata-cpu-and-memory-state">5.3 Snapshot Metadata, CPU and Memory State
 </h2><p>The subdirectories under <code>cubetoolbox/cube-snapshot/cubebox</code> are named by template name and contain the metadata <code>metadata.json</code>, CPU state <code>state.json</code>, and memory snapshot <code>memory-ranges</code>.</p>
-<h2 id="storage-architecture-overview-1">Storage Architecture Overview
+<h2 id="54-storage-architecture-overview">5.4 Storage Architecture Overview
 </h2><p><img alt="sandbox from snapshot" class="gallery-image" data-flex-basis="317px" data-flex-grow="132" height="804" loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="/p/cubesandbox-storage-analysis/mvm-storage-from-template.drawio.png" srcset="/p/cubesandbox-storage-analysis/mvm-storage-from-template.drawio_hu_b735b9efa8569839.png 800w, /p/cubesandbox-storage-analysis/mvm-storage-from-template.drawio.png 1065w" width="1065"></p>
-<h2 id="mvm-system-disk-1">MVM System Disk
+<h2 id="55-mvm-system-disk">5.5 MVM System Disk
 </h2><p>The MVM system disk logic is exactly the same as the &ldquo;creating sandbox from image&rdquo; method. The system disk raw image is mounted to the MVM via virtual device pmem0 and serves as the MVM&rsquo;s root directory.</p>
-<h2 id="container-image-and-container-writable-layer">Container Image and Container Writable Layer
+<h2 id="56-container-image-and-container-writable-layer">5.6 Container Image and Container Writable Layer
 </h2><p>This is the main difference from the &ldquo;creating sandbox from image&rdquo; method.</p>
 <p>The container image is packaged as an ext4 filesystem raw image file and mounted to the MVM as virtual block device pmem1.</p>
 <p>The container writable layer logic is consistent with the &ldquo;creating sandbox from image&rdquo; method, still using an ext2 raw image file under the host&rsquo;s <code>/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir</code> directory, virtualized as a virtio-blk block device (vda) and mounted to the MVM.</p>
-<h2 id="overlayfs-mount-inside-the-mvm-1">overlayfs Mount Inside the MVM
+<h2 id="57-overlayfs-mount-inside-the-mvm">5.7 overlayfs Mount Inside the MVM
 </h2><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bash-5.2# mount
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>/dev/pmem0 on / type ext4 <span style="color:#f92672">(</span>ro,relatime,errors<span style="color:#f92672">=</span>remount-ro,dax<span style="color:#f92672">=</span>always<span style="color:#f92672">)</span>
@@ -664,7 +722,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>overlay2 on /run/cube-containers/tpl-kvm-1_0/rootfs type overlay <span style="color:#f92672">(</span>rw,relatime,lowerdir<span style="color:#f92672">=</span>/run/cube-containers/sandbox/pmem-cube/pmem1/,upperdir<span style="color:#f92672">=</span>/run/blk-cube/vda/disk/tpl-kvm-1_0/upper,workdir<span style="color:#f92672">=</span>/run/blk-cube/vda/disk/tpl-kvm-1_0/work,uuid<span style="color:#f92672">=</span>on<span style="color:#f92672">)</span>
 </span></span></code></pre></div><p>As you can see, inside the MVM, the ext4 filesystem on the pmem1 block device is mounted to <code>/run/cube-containers/sandbox/pmem-cube/pmem1</code>, then this directory serves as the lowerdir of overlayfs, the subdirectory <code>/run/blk-cube/vda/disk/tpl-kvm-1_0/upper</code> on vda serves as the upperdir of overlayfs, and the merged overlay view is mounted to <code>/run/cube-containers/tpl-kvm-1_0/rootfs</code>, which serves as the container&rsquo;s rootfs.</p>
-<h1 id="comparison-of-storage-architectures-between-the-two-methods">Comparison of Storage Architectures Between the Two Methods
+<h1 id="6-comparison-of-storage-architectures-between-the-two-methods">6. Comparison of Storage Architectures Between the Two Methods
 </h1><p>The main difference lies in the handling of container images:</p>
 <div class="table-wrapper"><table>
 	<thead>
@@ -757,8 +815,6 @@
     </section>
     
     <section class="powerby">
-        
-            footer text <br/>
         Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
@@ -800,7 +856,7 @@
             </main>
         </div>
         
-<script type="text/javascript" src="/ts/main.b2b19560591db61edc93c23803d77f5830bf9678ad23b1078840d8615236c32f.js" defer></script>
+<script type="text/javascript" src="/ts/main.1ff1e5fdc4e178ed422e50aa407526dc552f26342d729343fded19416194382c.js" defer></script>
 
 
     </body>

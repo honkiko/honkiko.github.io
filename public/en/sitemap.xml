@@ -2,135 +2,135 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/en/archives/</loc>
+    <loc>https://example.org/en/archives/</loc>
     <lastmod>2026-06-28T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/archives/"
+                href="https://example.org/archives/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/archives/"
+                href="https://example.org/en/archives/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/</loc>
+    <loc>https://example.org/en/</loc>
     <lastmod>2026-06-28T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/"
+                href="https://example.org/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/"
+                href="https://example.org/en/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/page/</loc>
+    <loc>https://example.org/en/page/</loc>
     <lastmod>2026-06-28T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/page/"
+                href="https://example.org/page/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/page/"
+                href="https://example.org/en/page/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/tags/cubesandbox/</loc>
+    <loc>https://example.org/en/tags/cubesandbox/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/tags/cubesandbox/"
+                href="https://example.org/tags/cubesandbox/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/tags/cubesandbox/"
+                href="https://example.org/en/tags/cubesandbox/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/p/cubesandbox-storage-analysis/</loc>
+    <loc>https://example.org/en/p/cubesandbox-storage-analysis/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/p/cubesandbox-storage-analysis/"
+                href="https://example.org/p/cubesandbox-storage-analysis/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/p/cubesandbox-storage-analysis/"
+                href="https://example.org/en/p/cubesandbox-storage-analysis/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/post/</loc>
+    <loc>https://example.org/en/post/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/post/"
+                href="https://example.org/post/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/post/"
+                href="https://example.org/en/post/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/tags/sandbox/</loc>
+    <loc>https://example.org/en/tags/sandbox/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/tags/sandbox/"
+                href="https://example.org/tags/sandbox/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/tags/sandbox/"
+                href="https://example.org/en/tags/sandbox/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/tags/storage/</loc>
+    <loc>https://example.org/en/tags/storage/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/en/tags/</loc>
+    <loc>https://example.org/en/tags/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/tags/"
+                href="https://example.org/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/tags/"
+                href="https://example.org/en/tags/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/categories/</loc>
+    <loc>https://example.org/en/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/categories/"
+                href="https://example.org/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/categories/"
+                href="https://example.org/en/categories/"
                 />
   </url><url>
-    <loc>http://localhost:1313/en/search/</loc>
+    <loc>https://example.org/en/search/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-Hans-CN"
-                href="http://localhost:1313/search/"
+                href="https://example.org/search/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
-                href="http://localhost:1313/en/search/"
+                href="https://example.org/en/search/"
                 />
   </url>
 </urlset>

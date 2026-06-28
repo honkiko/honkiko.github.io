@@ -1,0 +1,47 @@
+.left-sidebar {
+    #main-menu {
+        flex-grow: 0;
+    }
+
+    .menu-bottom-section {
+        margin-top: 0;
+    }
+}
+
+.sidebar-widgets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--widget-separation);
+    margin-top: var(--sidebar-element-separation);
+
+    @media (max-width: 768px) {
+        display: none;
+    }
+
+    .widget {
+        .widget-icon {
+            margin-right: var(--menu-icon-separation);
+            margin-bottom: 0;
+
+            svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        .widget-title {
+            display: inline;
+            margin-bottom: 0;
+            font-size: 1.4rem;
+        }
+
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .tagCloud-tags,
+        .widget-archive--list {
+            width: 100%;
+        }
+    }
+}
