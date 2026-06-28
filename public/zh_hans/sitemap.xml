@@ -109,18 +109,6 @@
     <loc>https://example.org/tags/%E5%AD%98%E5%82%A8/</loc>
     <lastmod>2026-06-26T16:25:24+08:00</lastmod>
   </url><url>
-    <loc>https://example.org/categories/</loc>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-Hans-CN"
-                href="https://example.org/categories/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="https://example.org/en/categories/"
-                />
-  </url><url>
     <loc>https://example.org/search/</loc>
     <xhtml:link
                 rel="alternate"

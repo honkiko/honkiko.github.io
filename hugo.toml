@@ -24,7 +24,6 @@ title = "HongZhiguo's blog"
 
 [taxonomies]
   tag = "tags"
-  category = "categories"
 
 [params]
   [params.widgets]

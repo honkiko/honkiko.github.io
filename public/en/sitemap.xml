@@ -109,18 +109,6 @@
                 href="https://example.org/en/tags/"
                 />
   </url><url>
-    <loc>https://example.org/en/categories/</loc>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-Hans-CN"
-                href="https://example.org/categories/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="https://example.org/en/categories/"
-                />
-  </url><url>
     <loc>https://example.org/en/search/</loc>
     <xhtml:link
                 rel="alternate"
