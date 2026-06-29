@@ -213,9 +213,29 @@ Files like `1Gi/0/16ab3912-6b41-474d-b971-012d95bfd917` are raw image files for 
 
 The capacity of these virtio-blk devices can be specified, with a default of 1G. Those with 1G capacity are placed under the `1Gi` subdirectory, and others under the `othersv2` subdirectory.
 
-To speed up sandbox creation, cubelet pre-creates many such empty image files. When a sandbox needs to mount a virtio-blk block device, it directly uses a pre-created image file, avoiding the time needed to create a new image file with an empty ext2 filesystem.
+### 4.5.2 Reflink and Preheating Pool for virtio-blk Image Files
 
-### 4.5.2 virtio-blk Block Devices Inside the MVM
+To speed up sandbox creation and reduce disk space overhead, two optimization measures are adopted:
+
+1.  reflink
+
+2.  Pre-creation
+
+Reflink (Copy-on-Write Link) is an efficient file cloning mechanism unique to CoW (Copy-on-Write) filesystems. A regular copy replicates not only the inode but also all data blocks. A reflink copy, however, does not copy the file's data blocks; it only creates independent file metadata (inode), and the two files share the underlying disk data blocks. Only when one of the files is modified does the filesystem copy the modified data blocks, after which the two files become independent.
+
+Currently, the ext filesystem does not support reflink, while xfs and btrfs do. Therefore, it is recommended to use the xfs filesystem for the `/data/cubelet` directory. At startup, plugin.go's `checkPoolType()` automatically detects whether reflink is supported and falls back to regular copy if not.
+
+**PoolDefaultFormatSizeList** (default: ["1Gi"]) defines which sizes of raw image files to pre-create. Taking "1Gi" as an example, cubelet pre-creates 100 subdirectories numbered 0 to 99 under `/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir/1Gi`, each containing a pre-created base.raw image file. It also creates a certain number of raw image files via reflink from the base.raw in the same subdirectory. When cubelet needs a new raw image file for sandbox creation, it first fetches one from the pre-created pool, further eliminating the time cost of executing reflink.
+
+The creation logic for base.raw is in the function `newExt4BaseRaw(filePath, uuid string, size int64) error`, with the following flow:
+
+ `touch → truncate → mkfs.ext4 → mount → mkdir → umount`
+
+The `othersv2` subdirectory also has 100 pre-created subdirectories numbered 0 to 99, each with a pre-created base.raw, but no pre-created reflink pool of raw image files. If the requested capacity, after normalization by `normalizeRootfsSizes`, does not fall within the pre-created pool, it will be created on-demand under the `othersv2` subdirectory — first by performing a reflink from base.raw, then executing **truncate + e2fsck + resize2fs** to expand to the requested capacity.
+
+**Note**: This logic has undergone significant changes in subsequent versions. The author plans to cover this separately when time permits.
+
+### 4.5.3 virtio-blk Block Devices Inside the MVM
 
 Log into the MVM via `cube-runtime login` and run `df -h` to see the virtual disk and filesystem mount status:
 
@@ -236,7 +256,7 @@ overlay2        1.1G   84K  1.1G   1% /run/cube-containers/b48b9c87427847feb4595
 
 Among them, /dev/vda and /dev/vdb are two virtio-blk block devices, mounted to /run/blk-cube/vda and /run/blk-cube/vdb respectively.
 
-### 4.5.3 overlayfs Mount Inside the MVM
+### 4.5.4 overlayfs Mount Inside the MVM
 
 Here vda serves as the container's writable layer. You can see the overlayfs mount created for the container via the mount command:
 

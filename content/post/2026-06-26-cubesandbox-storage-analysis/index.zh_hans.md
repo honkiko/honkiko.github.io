@@ -213,9 +213,47 @@ vm.info的 .config.fs部分
 
 这些virtio-blk设备的容量是可以指定的，默认应该是1G。 容量为1G的，就放在`1Gi` 子目录下， 其他容量的， 就放在 `othersv2`子目录下。
 
-为了加快sandbox创建速度， cubelet会预先准备很多这样的空镜像文件。这样sandbox需要挂载virtio-blk块设备时， 直接找一个预创建好的镜像文件即可， 避免了从新创建一个带ext2空文件系统的镜像文件，所需要的耗时。
 
-### 4.5.2 微虚机里的virtio-blk块设备
+
+### 4.5.2 virtio-blk镜像文件的reflink和预热池
+
+为了加快sandbox创建速度，并节省磁盘容量开销，采用了两个优化措施：
+
+1.  reflink
+
+2.  预创建
+
+
+
+Reflink（Copy-on-Write Link，写时复制链接）是支持 CoW（写时复制）的文件系统独有的高效文件克隆机制。普通拷贝除了复制inode，也会复制所有数据块。而 reflink拷贝不复制文件的数据块，仅新建独立文件元数据(inode)，两个文件共享底层磁盘数据块；只有当你修改其中一个文件时，文件系统才会复制被修改的数据块，两份文件从此互不影响。 
+
+
+
+目前ext文件系统不支持reflink， xfs和btrfs支持reflink。 因此建议`/data/cubelet`目录使用xfs文件系统。启动时 plugin.go的 checkPoolType() 会自动探测，如果不支持reflink，则回退到普通拷贝。
+
+
+
+**PoolDefaultFormatSizeList**(默认为 ["1Gi"])定义了预创建哪些尺寸的raw镜像文件。以"1Gi"为例，
+
+cubelet会在 `/data/cubelet/storage/io.cubelet.internal.v1.storage/emptydir/1Gi` 目录下预先创建0到99共100个子目录，每个子目录预先创建一个base.raw镜像文件。同时会从同子目录的base.raw，通过reflink创建一定数量的raw镜像文件。 当cubelet创建sandbox需要一个新的raw镜像文件时，优先到池里面取一个预创建好的文件， 进一步优化掉执行reflink的耗时。 
+
+
+
+base.raw的创建逻辑在函数 `newExt4BaseRaw(filePath, uuid string, size int64) error`， 流程为：
+
+ `touch → truncate → mkfs.ext4 → mount → mkdir → umount`
+
+
+
+`othersv2` 这个子目录下，也预先创建了"0"到"99"共100个子目录，每个子目录下也预先创建了base.raw，但没有预先执行reflink创建池化的raw镜像文件。  如果请求的容量经过normalizeRootfsSizes规整化以后，没有落在预创建池， 则会落到`othersv2` 子目录下即时创建，先从base.raw执行reflink， 然后执行 **truncate + e2fsck + resize2fs** 扩展到请求的容量。
+
+
+
+**注意**： 这块逻辑在后续新版本中发生了巨大变化。后面有空专门梳理一下。
+
+
+
+### 4.5.3 微虚机里的virtio-blk块设备
 
 通过cube-runtime login 登录到微虚机内，执行df -h可以看到虚拟磁盘和文件系统挂载情况：
 
@@ -236,7 +274,7 @@ overlay2        1.1G   84K  1.1G   1% /run/cube-containers/b48b9c87427847feb4595
 
 其中/dev/vda和/dev/vdb是两个virtio-blk块设备，分别挂载到了 /run/blk-cube/vda 和 /run/blk-cube/vdb。
 
-### 4.5.3 微虚机里的overlayfs挂载
+### 4.5.4 微虚机里的overlayfs挂载
 
 这里vda是作为容器的可写层。通过mount命令可以看到为容器创建的overlayfs挂载：
 
